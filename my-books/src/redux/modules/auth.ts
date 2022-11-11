@@ -1,16 +1,14 @@
 // 여기서 인증을 관리
 
-import { Action } from "@remix-run/router";
+import { push } from "connected-react-router";
+import { Action } from "redux-actions";
 import { createActions, handleActions } from "redux-actions";
-import { put, takeEvery } from "redux-saga/effects";
-import { LoginReqType } from "../../types";
+import { call, put, select, takeEvery } from "redux-saga/effects";
+import TokenService from "../../services/TokenService";
+import UserService from "../../services/UserService";
+import { AuthState, LoginReqType } from "../../types";
 
-// AuthState type작성
-interface AuthState {
-    token: string | null;
-    loading: boolean;
-    error: Error | null;
-};
+
 
 // 타입으로 AuthState지정
 // 초깃값 지정
@@ -53,7 +51,7 @@ const reducer = handleActions<AuthState, string>({
     }),
     FAIL: (state, action: any) => ({
         ...state,
-        loading: true,
+        loading: false,
         error: action.payload,
     }),
 }, initialState, {prefix});
@@ -66,15 +64,31 @@ export const {login, logout} = createActions('LOGIN', 'LOGOUT', {prefix})
 // login이라는 action이 dispatch되면 loginSaga가 진행되도록 처리
 function* loginSaga(action: Action<LoginReqType>) {
     try {
-        yield put(pending())
-    }catch () {
-
+        yield put(pending());
+        const token: string = yield call(UserService.login, action.payload);
+        TokenService.set(token);
+        // 받아온 토큰을 localstorage에 넣고
+        // 동시에 redux에 state로도 세팅
+        yield put(success(token))
+        yield put(push("/"))
+        // login이 정상적으로 되면, signin page에서 list페이지로 이동 -> push처리
+    }catch (error) {
+        yield put(fail(error)); // new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')
     }
 }
 
 // logout이라는 action이 dispatch되면 logoutSaga가 진행되도록 처리
 function* logoutSaga() {
-
+    try {
+        yield put(pending());
+        const token: string = yield select(state => state.auth.token)
+        yield call(UserService.logout, token);
+        TokenService.set(token);
+    }catch (error) {
+    }finally {
+        TokenService.remove();
+        yield put(success(null))
+    }
 }
 // authSaga만들기
 export function* authSaga() {

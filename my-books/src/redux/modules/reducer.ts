@@ -2,10 +2,14 @@
 
 import { combineReducers } from "redux";
 import auth from "./auth";
+import books from './books'
 
 // auth에 auth라고하는 하위 reducer를 설정
-const reducer = combineReducers({
-    auth,
-});
+const reducer = (routerReducer: any) => 
+    combineReducers({
+        auth,
+        books,
+        router: routerReducer,
+    });
 
-export default reducer
+export default reducer;

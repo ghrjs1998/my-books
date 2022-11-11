@@ -1,5 +1,5 @@
 import { click } from "@testing-library/user-event/dist/click";
-import { Row, Col, Input, Button } from "antd";
+import { Row, Col, Input, Button, InputRef } from "antd";
 import { useRef } from "react";
 import { LoginReqType } from "../types";
 import styles from './Signin.module.css'
@@ -14,8 +14,8 @@ interface SigninProps {
 // ant design에 있는 row colum을 사용해 greed설정
 const Signin: React.FC<SigninProps> = ({ login }) => {
     // 작업한 UI uncontrolled component로 Input 2개를 reference삼고 그 reference에서 값을 꺼낸 다음 SIGN IN 버튼을 클릭하면 login API를 칠 수 있도록 작업
-    const emailRef = useRef(null); // 제너릭으로 antd의 Input 컴포넌트를 넣음
-  const passwordRef = useRef(null); // useRef로 DOM 직접 선택
+    const emailRef = useRef<InputRef>(null); // 제너릭으로 antd의 Input 컴포넌트를 넣음
+    const passwordRef = useRef<InputRef>(null); // useRef로 DOM 직접 선택
 
     return (
         <Row align="middle" className={styles.signin_row}>
@@ -69,8 +69,8 @@ const Signin: React.FC<SigninProps> = ({ login }) => {
     // click함수 만들기
     // 여기선 email, password의 reference의 값을 실제로 꺼내옴
     function click() {
-        const email = emailRef.current!; // emailRef.current 까지 하면 null 혹은 Input이 나옴 Non-null assertion을 사용해서 null일 가능성을 없애줌. 타입이 Input으로 고정됨
-        const password = passwordRef.current!;
+        const email = emailRef.current!.input!.value; // emailRef.current 까지 하면 null 혹은 Input이 나옴 Non-null assertion을 사용해서 null일 가능성을 없애줌. 타입이 Input으로 고정됨
+        const password = passwordRef.current!.input!.value;
 
         login({email, password})
     }
