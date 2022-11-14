@@ -1,10 +1,17 @@
 // 책 추가하는 페이지 구현
-import React from 'react';
+import { Navigate } from 'react-router-dom';
+import AddCotainer from '../containers/AddContainer';
+import useToken from '../hooks/useToken';
 
-export default function Add() {
-    return (
-        <div>
-            <h1>Add</h1>
-        </div>
-    )
-}
+function Add() {
+    // 로그인이 되었는지 안되었는지 확인
+    const token = useToken();
+  
+    if (token === null) {
+      return <Navigate to="/signin" />;
+    }
+  
+    return <AddCotainer />;
+  }
+  
+  export default Add;
