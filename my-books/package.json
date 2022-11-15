@@ -62,5 +62,5 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/redux-actions": "^2.6.2"
   },
-  "proxy": "http://localhost:3000/signin"
+  "proxy": "http://localhost:3000/"
 }

@@ -1,6 +1,6 @@
 import { ForkOutlined } from "@ant-design/icons"
 import { Button, Input, InputRef, PageHeader, message as messageDialog } from "antd"
-import TextArea, { TextAreaRef } from "antd/lib/input/TextArea"
+import TextArea from "antd/lib/input/TextArea"
 import Layout from "./Layout"
 import styles from "./Add.module.css"
 import { useRef } from "react"

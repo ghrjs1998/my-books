@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux"
 import List from "../componets/List"
 import { RootState, BookType } from "../types";
-import {getBooks as getBooksSagaStart} from '../redux/modules/books'
+import {getBooks as getBooksSagaStart, deleteBook as deleteBookSagaStart} from '../redux/modules/books'
 import {logout as logoutSagaStart} from '../redux/modules/auth'
 import { push } from "connected-react-router";
 
@@ -33,6 +33,10 @@ export default function ListContainer() {
       const goAdd = useCallback(() => {
         dispatch(push('/add'))
       }, [dispatch])
+
+      const deleteBook = useCallback((bookId: number) => {
+        dispatch(deleteBookSagaStart(bookId))
+      }, [dispatch])
     
-    return <List books={books} loading={loading} getBooks={getBooks} error={error} logout={logout} goAdd={goAdd} />
+    return <List books={books} loading={loading} getBooks={getBooks} error={error} logout={logout} goAdd={goAdd} deleteBook={deleteBook} />
 }

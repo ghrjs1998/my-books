@@ -37,7 +37,7 @@ export default reducer;
 // saga에 대한 정의
 
 // 책 가져오는 API를 실행하는 saga함수를 만들고 dispatch하기
-export const { getBooks, addBook } = createActions('GET_BOOKS', 'ADD_BOOK', {
+export const { getBooks, addBook, deleteBook } = createActions('GET_BOOKS', 'ADD_BOOK', 'DELETE_BOOK', {
     prefix,
 });
 
@@ -66,8 +66,22 @@ function* addBookSaga(action: Action<BookReqType>) {
     }
 }
 
+function* deleteBookSaga(action: Action<number>) {
+    try{
+        const bookId = action.payload;
+        yield put(pending());
+        const token: string = yield select((state) => state.token.auth);
+        yield call(BooksService.deleteBook, token, bookId);
+        const books: BookType[] = yield select((state) => state.books.books);
+        yield put(success(books.filter((book) => book.bookId !== bookId)));
+    }catch(error){
+        yield put(fail(error))
+    }
+}
+
 // books 전체에 대한 saga를 모은 books 사가를 만들어 rootsaga로 합류
 export function* booksSaga() {
     yield takeLatest(`${prefix}/GET_BOOKS`, getBooksSaga)
     yield takeEvery(`${prefix}/ADD_BOOK`, addBookSaga)
+    yield takeEvery(`${prefix}/DELETE_BOOK`, deleteBookSaga)
 }
